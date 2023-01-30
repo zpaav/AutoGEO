@@ -1,9 +1,10 @@
 _addon.author = 'Ivaar, modified by icy, and further modified by Fendo'
 _addon.commands = {'AutoGEO','geo','ageo'}
 _addon.name = 'AutoGEO'
-_addon.version = '2022.12.22'
+_addon.version = '2023.01.29'
 
 --[[
+01/29/2023: Updated the display box to include the newer settings - attrition, full circle, and full circle dist.
 12/22/2022: Added in Ecliptic Attrition toggle. [//ageo attrition <on|off>]
 12/19/2022: Added in a max range switch for pulling down bubbles [//ageo fullcircledist <num>].
 12/15/2020: Automatically uses full circle when out of range of bubble.
@@ -27,7 +28,7 @@ default = {
     blaze = false,
     attrition = false,
     fullcircle = true,
-    fullcircle_dist = 40,
+    fullcircle_dist = 8,
     entrust = {},
     min_ws_hp = 20,
     max_ws_hp = 99,
@@ -149,10 +150,23 @@ display_box = function()
         if settings.entrust.target then
             str = str..'\n Entrust: %s: \n  [%s] ':format(settings.entrust.target:ucfirst(),settings.entrust.ma)
         end
+
+        if settings.fullcircle
+        then
+            str = str..'\n Full Circle: On'
+            str = str..'\n Full Dist: '..settings.fullcircle_dist
+        else
+            str = str..'\n Full Circle: Off'
+        end
         if settings.blaze then
             str = str..'\n Blaze: On'
         else
             str = str..'\n Blaze: Off'
+        end
+        if settings.attrition then
+            str = str..'\n Attrition: On'
+        else
+            str = str..'\n Attrition: Off'
         end
         for k,v in ipairs(settings.buffs.haste) do
             str = str..'\n Haste:[%s]':format(v:ucfirst())
@@ -199,7 +213,7 @@ function prerender()
                 settings.fullcircle_dist = 39
             end
 
-            if luopan.distance:sqrt() > settings.fullcircle_dist then
+            if luopan.distance:sqrt() > tonumber(settings.fullcircle_dist) then
                 use_JA('Full Circle','<me>')
                 return
             end
@@ -310,6 +324,7 @@ function addon_command(...)
         elseif (commands[1] == 'fullcircledist' or commands[1] == 'fcd') and commands[2] then
             if tonumber(commands[2]) ~= 'nil' then
                 settings.fullcircle_dist = tonumber(commands[2])
+                addon_message('Fullcircle dist set to %s':format(commands[2]))
             end
         elseif commands[1] == 'entrust' and commands[2] then
             if commands[3] then
