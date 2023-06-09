@@ -1,7 +1,7 @@
 <?xml version="1.1" ?>
 <settings>
     <global>
-        <actions>false</actions>
+        <actions>true</actions>
         <active>true</active>
         <attrition>false</attrition>
         <aug>
@@ -13,16 +13,17 @@
             <refresh />
         </buffs>
         <delay>4.2</delay>
+        <engaged>true</engaged>
         <entrust>
-            <ma>Indi-Fury</ma>
+            <ma>Indi-Haste</ma>
             <target>fendo</target>
         </entrust>
         <fullcircle>true</fullcircle>
-        <fullcircle_dist>40</fullcircle_dist>
+        <fullcircle_dist>7</fullcircle_dist>
         <geo>Geo-Frailty</geo>
-        <indi>Indi-Haste</indi>
-        <max_ws_hp>0</max_ws_hp>
-        <min_ws_hp>0</min_ws_hp>
+        <indi>Indi-Fury</indi>
+        <max_ws_hp>99</max_ws_hp>
+        <min_ws_hp>20</min_ws_hp>
         <recast>
             <buff>
                 <max>10</max>
@@ -94,8 +95,8 @@
             </flags>
             <padding>0</padding>
             <pos>
-                <x>0</x>
-                <y>0</y>
+                <x>1654</x>
+                <y>62</y>
             </pos>
             <text>
                 <alpha>255</alpha>
@@ -118,35 +119,17 @@
         </text>
     </global>
     <denores>
-        <indi>Indi-Fury</indi>
-        <max_ws_hp>99</max_ws_hp>
-        <min_ws_hp>20</min_ws_hp>
+        <actions>false</actions>
+        <engaged>false</engaged>
+        <entrust>
+            <ma>Indi-AGI</ma>
+            <target>sagespirit</target>
+        </entrust>
         <text>
             <pos>
-                <x>1600</x>
-                <y>410</y>
+                <x>1644</x>
+                <y>91</y>
             </pos>
         </text>
     </denores>
-    <rythor>
-        <actions>true</actions>
-        <aug>
-            <lifestream>13</lifestream>
-        </aug>
-        <blaze>true</blaze>
-        <entrust>
-            <ma>Indi-Refresh</ma>
-            <target>gorby</target>
-        </entrust>
-        <geo>Geo-Fend</geo>
-        <indi>Indi-Fury</indi>
-        <max_ws_hp>99</max_ws_hp>
-        <min_ws_hp>20</min_ws_hp>
-        <text>
-            <pos>
-                <x>1487</x>
-                <y>834</y>
-            </pos>
-        </text>
-    </rythor>
 </settings>

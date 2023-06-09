@@ -1,9 +1,10 @@
 _addon.author = 'Ivaar, modified by icy, and further modified by Fendo'
 _addon.commands = {'AutoGEO','geo','ageo'}
 _addon.name = 'AutoGEO'
-_addon.version = '2023.01.29'
+_addon.version = '2023.06.09'
 
 --[[
+06/09/2023: Added in an engaged option to only use geo casting when engaged on mobs. Added to the casting check to so geomancy won't be casted if invisible or sneak is up. 
 01/29/2023: Updated the display box to include the newer settings - attrition, full circle, and full circle dist.
 12/22/2022: Added in Ecliptic Attrition toggle. [//ageo attrition <on|off>]
 12/19/2022: Added in a max range switch for pulling down bubbles [//ageo fullcircledist <num>].
@@ -32,6 +33,7 @@ default = {
     entrust = {},
     min_ws_hp = 20,
     max_ws_hp = 99,
+    engaged = false,
     buffs={haste=L{},refresh=L{}},
     recast={indi={min=20,max=25},buff={min=5,max=10}},
     aug = {lifestream=20},
@@ -168,6 +170,11 @@ display_box = function()
         else
             str = str..'\n Attrition: Off'
         end
+        if settings.engaged then
+            str = str..'\n GEO Only Engaged: On'
+        else
+            str = str..'\n GEO Only Engaged: Off'
+        end
         for k,v in ipairs(settings.buffs.haste) do
             str = str..'\n Haste:[%s]':format(v:ucfirst())
         end
@@ -193,8 +200,9 @@ function prerender()
         local play = windower.ffxi.get_player()
         if not play or play.main_job ~= 'GEO' or play.status > 1 then return end
 
+        local status = res.statuses[play.status].english
         local buffs = calculate_buffs(play.buffs)
-        if is_moving or is_casting or buffs.stun or buffs.sleep or buffs.charm or buffs.terror or buffs.petrification then return end
+        if is_moving or is_casting or buffs.stun or buffs.sleep or buffs.charm or buffs.terror or buffs.petrification or buffs.sneak or buffs.invisible then return end
 
         local JA_WS_lock,MA_lock
         if buffs.silence or buffs.mute or buffs.omerta then return end
@@ -205,6 +213,8 @@ function prerender()
         local luopan = windower.ffxi.get_mob_by_target('pet')
         local target = windower.ffxi.get_mob_by_target('bt')
         local recast = math.random(settings.recast.indi.min,settings.recast.indi.max)
+        
+        if not (((status == 'Idle') and not settings.engaged) or status == 'Engaged') then return end
 
         -- FULL CIRCLE
         local geo = settings.geo and geo_spells:with('en', settings.geo)
@@ -314,6 +324,12 @@ function addon_command(...)
                 settings.attrition = true
             elseif commands[2] == 'off' then
                 settings.attrition = false
+            end
+        elseif commands[1] == 'engaged' and commands[2] then
+            if commands[2] == 'on' or commands[2] == 'true' then
+                settings.engaged = true
+            elseif commands[2] == 'off' or commands[2] == 'false'  then
+                settings.engaged = false
             end
         elseif (commands[1] == 'fullcircle' or commands[1] == 'fc') and commands[2] then
             if commands[2] == 'on' then
@@ -520,6 +536,7 @@ function help()
     addon_message(' //ageo attrition [on/off] - toggle the use of ability "Ecliptic Attrition"')
     addon_message(' //ageo fullcircle [on/off] - (default: on) toggle the use of "Full Circle" when you are 40+ yalms away.')
     addon_message(' //ageo fullcircledist [num] - Sets the distance from the lupon to "Full Circle". Default is 39.')
+    addon_message(' //ageo engaged on | off - Sets AutoGeo to work only when engaged. Default is off.')
     addon_message(' //ageo save -- saves settings')
     addon_message(' //ageo [on/off] -- turn actions on/off')
 end
